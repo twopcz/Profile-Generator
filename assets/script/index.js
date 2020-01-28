@@ -68,7 +68,15 @@ async function getUser(query, user) {
 
 async function generateHTML(answers) {
   try {
-    let color = answers.color;
+    const color = answers.color;
+
+    const cssColor = `
+    body {
+        background-color: ${color};
+    }
+    `;
+
+    writeFileAsync('../css/background.css', cssColor);
 
     readFileAsync('userInfo.json', 'utf8', (err, data) => {
       if (err) throw err;
@@ -101,7 +109,8 @@ async function generateHTML(answers) {
             integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
             crossorigin="anonymous"
           />
-          <link rel="stylesheet" href="assets/css/style.css" />
+          <link rel="stylesheet" href="../css/style.css" />
+          <link rel="stylesheet" href="../css/background.css" />
           <title>CLI Profile Generator</title>
         </head>
         <body>
