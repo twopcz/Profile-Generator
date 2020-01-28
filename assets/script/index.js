@@ -74,73 +74,90 @@ async function generateHTML(answers) {
       if (err) throw err;
       const fileData = JSON.parse(data);
 
-      console.log(fileData.data);
+      const {
+        repos,
+        followers,
+        following,
+        stars,
+        picture,
+        link,
+        name,
+        blog,
+        location,
+        email,
+        bio
+      } = fileData[0];
+
+      const html = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+          <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+            crossorigin="anonymous"
+          />
+          <link rel="stylesheet" href="assets/css/style.css" />
+          <title>CLI Profile Generator</title>
+        </head>
+        <body>
+          <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+              <h1 class="display-4">Hi! My name is ${name}</h1>
+              <div class="row justify-content-center">
+                <div class="col-4">
+                  <p class="lead">I am currently located in ${location}.</p>
+                </div>
+                <div class="col-4">
+                  <p class="lead">GitHub: <a href="${link}">here</a>.</p>
+                </div>
+                <div class="col-4">
+                  <p class="lead">Blog: <a href="${blog}">here</a>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container align-items-center text-center">
+            <div class="row">
+              <div class="col-6">Repositories: ${repos}</div>
+              <div class="col-6">Followers: ${followers}</div>
+            </div>
+            <div class="row">
+              <div class="col-6">Stars: ${stars}</div>
+              <div class="col-6">Following: ${following}</div>
+            </div>
+          </div>
+      
+          <script
+            src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"
+          ></script>
+          <script
+            src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"
+          ></script>
+          <script
+            src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"
+          ></script>
+        </body>
+      </html>`;
+
+      writeFileAsync('index.html', html);
+      console.log('Successfully wrote to index.html');
     });
+
+
   } catch (err) {
     console.error(err);
   }
-
-  //   return `
-  //   <!DOCTYPE html>
-  //   <html lang="en">
-  //   <head>
-  //     <meta charset="UTF-8" />
-  //     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  //     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-  //     <link
-  //       rel="stylesheet"
-  //       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-  //       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-  //       crossorigin="anonymous"
-  //     />
-  //     <link rel="stylesheet" href="assets/css/style.css" />
-  //     <title>CLI Profile Generator</title>
-  //   </head>
-  //   <body>
-  //     <div class="jumbotron jumbotron-fluid">
-  //       <div class="container">
-  //         <h1 class="display-4">Hi! My name is ${userInfo.name}</h1>
-  //         <div class="row justify-content-center">
-  //           <div class="col-4">
-  //             <p class="lead">I am from ${userInfo.location}.</p>
-  //           </div>
-  //           <div class="col-4">
-  //             <p class="lead">GitHub: ${userInfo.html_url}.</p>
-  //           </div>
-  //           <div class="col-4">
-  //             <p class="lead">Blog: ${userInfo.blog}.</p>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //     <div class="container align-items-center text-center">
-  //       <div class="row">
-  //         <div class="col-6">Repositories: ${userInfo.repos}</div>
-  //         <div class="col-6">Followers: ${userInfo.followers}</div>
-  //       </div>
-  //       <div class="row">
-  //         <div class="col-6">Stars</div>
-  //         <div class="col-6">Following: ${userInfo.following}</div>
-  //       </div>
-  //     </div>
-
-  //     <script
-  //       src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-  //       integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-  //       crossorigin="anonymous"
-  //     ></script>
-  //     <script
-  //       src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-  //       integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-  //       crossorigin="anonymous"
-  //     ></script>
-  //     <script
-  //       src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-  //       integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-  //       crossorigin="anonymous"
-  //     ></script>
-  //   </body>
-  // </html>`;
 }
 
 // function toPDF() {
@@ -158,10 +175,8 @@ async function init() {
 
     await getUser(searchQuery, username);
 
-    const html = await generateHTML(answers);
+    await generateHTML(answers);
 
-    await writeFileAsync('index.html', html);
-    console.log('Successfully wrote to index.html');
   } catch (err) {
     console.error(err);
   }
