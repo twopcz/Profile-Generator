@@ -1,0 +1,13 @@
+[
+    {
+        "type": "input",
+        "name": "github",
+        "message": "What is your GitHub username?"
+    },
+    {
+        "type": "list",
+        "name": "color",
+        "choices": ["red", "blue", "yellow", "green", "orange"],
+        "message": "What is your favorite color?"
+    }
+]
