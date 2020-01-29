@@ -161,7 +161,7 @@ async function generateHTML(answers) {
         </body>
       </html>`;
 
-      writeFileAsync('index.html', html);
+      writeFileAsync('../../index.html', html);
       console.log('Successfully wrote to index.html');
     });
   } catch (err) {
