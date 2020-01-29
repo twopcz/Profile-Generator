@@ -123,13 +123,13 @@ async function generateHTML(answers) {
                 </div>
               </div>
               <div class="row justify-content-center pt-3">
-                <div class="col-3">
+                <div class="col-2">
                   <p class="lead"><i class="fas fa-map-pin"></i> ${location}</p>
                 </div>
-                <div class="col-3">
+                <div class="col-2">
                   <p class="lead"><i class="fab fa-github-square"></i> <a href="${link}" target="_blank">GitHub</a></p>
                 </div>
-                <div class="col-3">
+                <div class="col-2">
                   <p class="lead"><i class="fas fa-address-card"></i> <a href="${blog}" target="_blank">Portfolio</a></p>
                 </div>
               </div>
