@@ -39,6 +39,8 @@ async function getUser(query, user, userAnswers) {
 
       const userStars = await axios.get(url + '/starred');
 
+      // error handle null
+
       const userData = [
         {
           repos: public_repos,
@@ -119,6 +121,7 @@ async function generateHTML(answers) {
           <div class="jumbotron jumbotron-fluid">
             <div class="container text-center">
               <h1 class="display-4">Hi! My name is <span class="font-weight-bold">${name}<span></h1>
+              <p class="lead">${bio}</p>
               <div class="row justify-content-center">
                 <div class="col-4">
                   <img src="${picture}" class="img-fluid rounded-circle" alt="profile-pic">
@@ -143,7 +146,7 @@ async function generateHTML(answers) {
                 <div class="col-6">
                   <div class="card">
                     <div class="card-body">
-                      <h5 class="card-title">Repositories</h5>
+                      <h5 class="card-title">Public Repositories</h5>
                       <p class="card-text">${repos}</p>
                       <a href="${link}?tab=repositories" class="btn btn-primary" target="_blank">My Work</a>
                     </div>
@@ -163,7 +166,7 @@ async function generateHTML(answers) {
                 <div class="col-6">
                   <div class="card">
                     <div class="card-body">
-                      <h5 class="card-title">Stars</h5>
+                      <h5 class="card-title">GitHub Stars</h5>
                       <p class="card-text">${stars}</p>
                       <a href="${link}?tab=stars" class="btn btn-primary" target="_blank">Starred Repos</a>
                     </div>
