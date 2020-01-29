@@ -7,7 +7,6 @@ const util = require('util');
 const axios = require('axios');
 
 const prompts = require('./prompts');
-const userInfo = require('./userInfo');
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const readFileAsync = util.promisify(fs.readFile);
@@ -16,7 +15,7 @@ function promptUser() {
   return inquirer.prompt(prompts);
 }
 
-async function getUser(query, user) {
+async function getUser(query, user, userAnswers) {
   try {
     const response = await axios.get(query);
 
@@ -40,6 +39,8 @@ async function getUser(query, user) {
 
       const userStars = await axios.get(url + '/starred');
 
+      // error handle null
+
       const userData = [
         {
           repos: public_repos,
@@ -58,6 +59,8 @@ async function getUser(query, user) {
 
       await writeFileAsync('userInfo.json', JSON.stringify(userData));
       console.log('Successfully wrote userInfo.json');
+
+      await generateHTML(userAnswers);
     } else {
       console.log('Username not found.');
     }
@@ -109,35 +112,76 @@ async function generateHTML(answers) {
             integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
             crossorigin="anonymous"
           />
-          <link rel="stylesheet" href="../css/style.css" />
-          <link rel="stylesheet" href="../css/background.css" />
+          <script src="https://kit.fontawesome.com/53455dd245.js" crossorigin="anonymous"></script>
+          <link rel="stylesheet" href="assets/css/style.css" />
+          <link rel="stylesheet" href="assets/css/background.css" />
           <title>CLI Profile Generator</title>
         </head>
         <body>
           <div class="jumbotron jumbotron-fluid">
-            <div class="container">
-              <h1 class="display-4">Hi! My name is ${name}</h1>
+            <div class="container text-center">
+              <h1 class="display-4">Hi! My name is <span class="font-weight-bold">${name}<span></h1>
+              <p class="lead">${bio}</p>
               <div class="row justify-content-center">
                 <div class="col-4">
-                  <p class="lead">I am currently located in ${location}.</p>
+                  <img src="${picture}" class="img-fluid rounded-circle" alt="profile-pic">
                 </div>
-                <div class="col-4">
-                  <p class="lead">GitHub: <a href="${link}">here</a>.</p>
+              </div>
+              <div class="row justify-content-center pt-3">
+                <div class="col-2">
+                  <p class="lead"><i class="fas fa-map-pin"></i> <a href="https://www.google.com/maps/place/${location}/" target="_blank">${location}</a></p>
                 </div>
-                <div class="col-4">
-                  <p class="lead">Blog: <a href="${blog}">here</a>.</p>
+                <div class="col-2">
+                  <p class="lead"><i class="fab fa-github-square"></i> <a href="${link}" target="_blank">GitHub</a></p>
+                </div>
+                <div class="col-2">
+                  <p class="lead"><i class="fas fa-address-card"></i> <a href="${blog}" target="_blank">Portfolio</a></p>
                 </div>
               </div>
             </div>
           </div>
           <div class="container align-items-center text-center">
-            <div class="row">
-              <div class="col-6">Repositories: ${repos}</div>
-              <div class="col-6">Followers: ${followers}</div>
-            </div>
-            <div class="row">
-              <div class="col-6">Stars: ${stars}</div>
-              <div class="col-6">Following: ${following}</div>
+            <div class="jumbotron bg-dark">
+              <div class="row py-2">
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Public Repositories</h5>
+                      <p class="card-text">${repos}</p>
+                      <a href="${link}?tab=repositories" class="btn btn-primary" target="_blank">My Work</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Followers</h5>
+                      <p class="card-text">${followers}</p>
+                      <a href="${link}?tab=followers" class="btn btn-primary" target="_blank">My Followers</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row py-2">
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">GitHub Stars</h5>
+                      <p class="card-text">${stars}</p>
+                      <a href="${link}?tab=stars" class="btn btn-primary" target="_blank">Starred Repos</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Following</h5>
+                      <p class="card-text">${following}</p>
+                      <a href="${link}?tab=following" class="btn btn-primary" target="_blank">Following</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
       
@@ -159,11 +203,9 @@ async function generateHTML(answers) {
         </body>
       </html>`;
 
-      writeFileAsync('index.html', html);
+      writeFileAsync('../../index.html', html);
       console.log('Successfully wrote to index.html');
     });
-
-
   } catch (err) {
     console.error(err);
   }
@@ -182,10 +224,9 @@ async function init() {
 
     let searchQuery = 'https://api.github.com/search/users?q=' + username;
 
-    await getUser(searchQuery, username);
+    await getUser(searchQuery, username, answers);
 
-    await generateHTML(answers);
-
+    // await generateHTML(answers);
   } catch (err) {
     console.error(err);
   }
