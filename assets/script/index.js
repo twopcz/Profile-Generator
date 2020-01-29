@@ -7,7 +7,6 @@ const util = require('util');
 const axios = require('axios');
 
 const prompts = require('./prompts');
-const userInfo = require('./userInfo');
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const readFileAsync = util.promisify(fs.readFile);
@@ -118,13 +117,16 @@ async function generateHTML(answers) {
             <div class="container">
               <h1 class="display-4">Hi! My name is ${name}</h1>
               <div class="row justify-content-center">
-                <div class="col-4">
+                <div class="col-3">
+                  <img src="${picture}" class="img-fluid" alt="profile-pic">
+                </div>
+                <div class="col-3">
                   <p class="lead">I am currently located in ${location}.</p>
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                   <p class="lead">GitHub: <a href="${link}">here</a>.</p>
                 </div>
-                <div class="col-4">
+                <div class="col-3">
                   <p class="lead">Blog: <a href="${blog}">here</a>.</p>
                 </div>
               </div>
@@ -162,8 +164,6 @@ async function generateHTML(answers) {
       writeFileAsync('index.html', html);
       console.log('Successfully wrote to index.html');
     });
-
-
   } catch (err) {
     console.error(err);
   }
@@ -185,7 +185,6 @@ async function init() {
     await getUser(searchQuery, username);
 
     await generateHTML(answers);
-
   } catch (err) {
     console.error(err);
   }
