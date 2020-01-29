@@ -22,6 +22,7 @@ async function getUser(query, user) {
     if (response.data.total_count === 1) {
       let userQuery = 'https://api.github.com/users/' + user;
       const userSearch = await axios.get(userQuery);
+      console.log(userSearch.data);
 
       const {
         avatar_url,
@@ -133,13 +134,44 @@ async function generateHTML(answers) {
             </div>
           </div>
           <div class="container align-items-center text-center">
-            <div class="row">
-              <div class="col-6">Repositories: ${repos}</div>
-              <div class="col-6">Followers: ${followers}</div>
+            <div class="row py-2">
+              <div class="col-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Repositories</h5>
+                    <p class="card-text">${repos}</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Followers</h5>
+                    <p class="card-text">${followers}</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="row">
-              <div class="col-6">Stars: ${stars}</div>
-              <div class="col-6">Following: ${following}</div>
+            <div class="row py-2">
+              <div class="col-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Stars</h5>
+                    <p class="card-text">${stars}</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Following</h5>
+                    <p class="card-text">${following}</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                  </div>
+                </div>
             </div>
           </div>
       
