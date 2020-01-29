@@ -22,7 +22,6 @@ async function getUser(query, user) {
     if (response.data.total_count === 1) {
       let userQuery = 'https://api.github.com/users/' + user;
       const userSearch = await axios.get(userQuery);
-      console.log(userSearch.data);
 
       const {
         avatar_url,
@@ -109,69 +108,75 @@ async function generateHTML(answers) {
             integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
             crossorigin="anonymous"
           />
+          <script src="https://kit.fontawesome.com/53455dd245.js" crossorigin="anonymous"></script>
           <link rel="stylesheet" href="assets/css/style.css" />
           <link rel="stylesheet" href="assets/css/background.css" />
           <title>CLI Profile Generator</title>
         </head>
         <body>
           <div class="jumbotron jumbotron-fluid">
-            <div class="container">
-              <h1 class="display-4">Hi! My name is ${name}</h1>
+            <div class="container text-center">
+              <h1 class="display-4">Hi! My name is <span class="font-weight-bold">${name}<span></h1>
               <div class="row justify-content-center">
                 <div class="col-3">
-                  <img src="${picture}" class="img-fluid" alt="profile-pic">
+                  <img src="${picture}" class="img-fluid rounded-circle" alt="profile-pic">
+                </div>
+              </div>
+              <div class="row justify-content-center pt-3">
+                <div class="col-3">
+                  <p class="lead"><i class="fas fa-map-pin"></i> ${location}</p>
                 </div>
                 <div class="col-3">
-                  <p class="lead">I am currently located in ${location}.</p>
+                  <p class="lead"><i class="fab fa-github-square"></i> <a href="${link}" target="_blank">GitHub</a></p>
                 </div>
                 <div class="col-3">
-                  <p class="lead">GitHub: <a href="${link}">here</a>.</p>
-                </div>
-                <div class="col-3">
-                  <p class="lead">Blog: <a href="${blog}">here</a>.</p>
+                  <p class="lead"><i class="fas fa-address-card"></i> <a href="${blog}" target="_blank">Portfolio</a></p>
                 </div>
               </div>
             </div>
           </div>
           <div class="container align-items-center text-center">
-            <div class="row py-2">
-              <div class="col-6">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Repositories</h5>
-                    <p class="card-text">${repos}</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+            <div class="jumbotron bg-dark">
+              <div class="row py-2">
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Repositories</h5>
+                      <p class="card-text">${repos}</p>
+                      <a href="${link}?tab=repositories" class="btn btn-primary" target="_blank">My Work</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Followers</h5>
+                      <p class="card-text">${followers}</p>
+                      <a href="${link}?tab=followers" class="btn btn-primary" target="_blank">My Followers</a>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="col-6">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Followers</h5>
-                    <p class="card-text">${followers}</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+              <div class="row py-2">
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Stars</h5>
+                      <p class="card-text">${stars}</p>
+                      <a href="${link}?tab=stars" class="btn btn-primary" target="_blank">Starred Repos</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Following</h5>
+                      <p class="card-text">${following}</p>
+                      <a href="${link}?tab=following" class="btn btn-primary" target="_blank">Following</a>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="row py-2">
-              <div class="col-6">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Stars</h5>
-                    <p class="card-text">${stars}</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                  </div>
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Following</h5>
-                    <p class="card-text">${following}</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                  </div>
-                </div>
             </div>
           </div>
       
