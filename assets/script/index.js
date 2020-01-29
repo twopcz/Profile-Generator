@@ -118,7 +118,7 @@ async function generateHTML(answers) {
             <div class="container text-center">
               <h1 class="display-4">Hi! My name is <span class="font-weight-bold">${name}<span></h1>
               <div class="row justify-content-center">
-                <div class="col-3">
+                <div class="col-4">
                   <img src="${picture}" class="img-fluid rounded-circle" alt="profile-pic">
                 </div>
               </div>
