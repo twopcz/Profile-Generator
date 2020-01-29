@@ -15,7 +15,7 @@ function promptUser() {
   return inquirer.prompt(prompts);
 }
 
-async function getUser(query, user) {
+async function getUser(query, user, userAnswers) {
   try {
     const response = await axios.get(query);
 
@@ -57,6 +57,8 @@ async function getUser(query, user) {
 
       await writeFileAsync('userInfo.json', JSON.stringify(userData));
       console.log('Successfully wrote userInfo.json');
+
+      await generateHTML(userAnswers);
     } else {
       console.log('Username not found.');
     }
@@ -124,7 +126,7 @@ async function generateHTML(answers) {
               </div>
               <div class="row justify-content-center pt-3">
                 <div class="col-2">
-                  <p class="lead"><i class="fas fa-map-pin"></i> ${location}</p>
+                  <p class="lead"><i class="fas fa-map-pin"></i> <a href="https://www.google.com/maps/place/${location}/" target="_blank">${location}</a></p>
                 </div>
                 <div class="col-2">
                   <p class="lead"><i class="fab fa-github-square"></i> <a href="${link}" target="_blank">GitHub</a></p>
@@ -219,9 +221,9 @@ async function init() {
 
     let searchQuery = 'https://api.github.com/search/users?q=' + username;
 
-    await getUser(searchQuery, username);
+    await getUser(searchQuery, username, answers);
 
-    await generateHTML(answers);
+    // await generateHTML(answers);
   } catch (err) {
     console.error(err);
   }
