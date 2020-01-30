@@ -121,7 +121,7 @@ async function generateHTML(answers) {
           <div class="jumbotron jumbotron-fluid">
             <div class="container text-center">
               <h1 class="display-4">Hi! My name is <span class="font-weight-bold">${name}<span></h1>
-              <p class="lead">${bio}</p>
+              <p class="lead"><em>${bio}</em></p>
               <div class="row justify-content-center">
                 <div class="col-4">
                   <img src="${picture}" class="img-fluid rounded-circle" alt="profile-pic">
@@ -146,7 +146,7 @@ async function generateHTML(answers) {
                 <div class="col-6">
                   <div class="card">
                     <div class="card-body">
-                      <h5 class="card-title">Public Repositories</h5>
+                      <h5 class="card-title">Public Repos</h5>
                       <p class="card-text">${repos}</p>
                       <a href="${link}?tab=repositories" class="btn btn-primary" target="_blank">My Work</a>
                     </div>
