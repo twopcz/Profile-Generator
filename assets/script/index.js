@@ -5,8 +5,10 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const util = require('util');
 const axios = require('axios');
-
+const { BrowserWindow } = require('electron');
 const prompts = require('./prompts');
+
+let win;
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const readFileAsync = util.promisify(fs.readFile);
@@ -211,9 +213,34 @@ async function generateHTML(answers) {
   }
 }
 
-// function toPDF() {
+async function createWindow() {
+  // win = new BrowserWindow({show : false});
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
 
-// }
+  win.loadFile('../../index.html');
+
+  win.webContents.on('did-finish-load', () => {
+    win.webContents
+      .printToPDF({})
+      .then(data => {
+        writeFileAsync('./index.pdf', data, err => {
+          if (err) throw err;
+          // not getting to this console log
+          // close the window as well
+          console.log('Successfully create PDF.');
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
+}
 
 async function init() {
   console.log('initializing...');
@@ -226,7 +253,7 @@ async function init() {
 
     await getUser(searchQuery, username, answers);
 
-    // await generateHTML(answers);
+    await createWindow();
   } catch (err) {
     console.error(err);
   }
