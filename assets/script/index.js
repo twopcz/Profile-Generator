@@ -1,12 +1,14 @@
 'use strict';
 
 const inquirer = require('inquirer');
-// import { prompt } from 'inquirer';
 const fs = require('fs');
 const util = require('util');
 const axios = require('axios');
-
+const { BrowserWindow } = require('electron');
 const prompts = require('./prompts');
+const open = require('open');
+
+let win;
 
 const writeFileAsync = util.promisify(fs.writeFile);
 const readFileAsync = util.promisify(fs.readFile);
@@ -56,6 +58,9 @@ async function getUser(query, user, userAnswers) {
           bio: bio
         }
       ];
+
+      // write all user data, that way I can extract these all later
+      // and then I won't need the first userSearch.data either
 
       await writeFileAsync('userInfo.json', JSON.stringify(userData));
       console.log('Successfully wrote userInfo.json');
@@ -107,10 +112,10 @@ async function generateHTML(answers) {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta http-equiv="X-UA-Compatible" content="ie=edge" />
           <link
-            rel="stylesheet"
-            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-            crossorigin="anonymous"
+          rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+          crossorigin="anonymous"
           />
           <script src="https://kit.fontawesome.com/53455dd245.js" crossorigin="anonymous"></script>
           <link rel="stylesheet" href="assets/css/style.css" />
@@ -205,15 +210,41 @@ async function generateHTML(answers) {
 
       writeFileAsync('../../index.html', html);
       console.log('Successfully wrote to index.html');
+      createWindow();
     });
   } catch (err) {
     console.error(err);
   }
 }
 
-// function toPDF() {
+async function createWindow() {
+  win = new BrowserWindow({show : false});
+  // win = new BrowserWindow({
+  //   width: 800,
+  //   height: 600,
+  //   webPreferences: {
+  //     nodeIntegration: true
+  //   }
+  // });
 
-// }
+  win.loadFile('../../index.html');
+
+  win.webContents.on('did-finish-load', () => {
+    win.webContents
+      .printToPDF({ printBackground: true })
+      .then(data => {
+        writeFileAsync('./index.pdf', data, 'utf8', err => {
+          if (err) throw err;
+          console.log('Successfully created PDF.');
+
+          openPDF();
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
+}
 
 async function init() {
   console.log('initializing...');
@@ -225,11 +256,15 @@ async function init() {
     let searchQuery = 'https://api.github.com/search/users?q=' + username;
 
     await getUser(searchQuery, username, answers);
-
-    // await generateHTML(answers);
   } catch (err) {
     console.error(err);
   }
+}
+
+async function openPDF() {
+  await open('./index.pdf', {wait: true});
+  console.log('The PDF viewer was closed.');
+  await win.close();
 }
 
 init();
