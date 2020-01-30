@@ -7,7 +7,7 @@
     {
         "type": "list",
         "name": "color",
-        "choices": ["red", "blue", "yellow", "green", "orange"],
+        "choices": ["red", "blue", "yellow", "purple", "black", "green", "orange"],
         "message": "What is your favorite color?"
     }
 ]
