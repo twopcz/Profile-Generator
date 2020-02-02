@@ -49,8 +49,8 @@ async function gitSearch(gitQuery, user) {
   }
 }
 
-async function setBackground(answers) {
-  const color = answers.color;
+async function setBackground(userColor) {
+  const color = userColor.color;
 
   const cssColor = `
   body {
@@ -169,13 +169,6 @@ function generateHTML(answers) {
 
 async function createWindow() {
   win = new BrowserWindow({ show: false });
-  // win = new BrowserWindow({
-  //   width: 800,
-  //   height: 600,
-  //   webPreferences: {
-  //     nodeIntegration: true
-  //   }
-  // });
 
   win.loadFile('../../index.html');
 
@@ -201,6 +194,7 @@ async function init() {
   try {
     const answers = await promptUser();
     const username = answers.github;
+
     const search = 'https://api.github.com/search/users?q=' + username;
 
     const userQuery = await gitSearch(search, username, answers);
@@ -208,6 +202,7 @@ async function init() {
     await writeFileAsync('userInfo.json', JSON.stringify(info));
     console.log('Successfully wrote to userInfo.json');
     const html = generateHTML(info);
+    setBackground(answers);
     await writeFileAsync('../../index.html', html);
     console.log('Successfully wrote to index.html');
     await createWindow();
