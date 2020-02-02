@@ -4,7 +4,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const util = require('util');
 const axios = require('axios');
-const { BrowserWindow } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const open = require('open');
 const prompts = require('./prompts');
 const htmlTemplate = require('./htmlTemplate');
@@ -17,20 +17,14 @@ function promptUser() {
   return inquirer.prompt(prompts);
 }
 
-async function gitSearch(gitQuery, user) {
+async function gitSearch(gitQuery) {
   try {
     const response = await axios.get(gitQuery);
 
-    if (response.data.total_count === 1) {
-      return 'https://api.github.com/users/' + user;
-
-      // const userStars = await axios.get(url + '/starred');
-      // console.log(userStars);
-      // console.log(url + '/starred');
-
-      // error handle null
+    if (response.data.total_count >= 1) {
+      return `https://api.github.com/users/${response.data.items[0].login}`;
     } else {
-      console.log('Username not found.');
+      console.log('Username not found');
     }
   } catch (err) {
     console.error(err);
@@ -43,6 +37,16 @@ async function userSearch(userQuery) {
     return user.data;
 
     // error handle null
+  } catch (err) {
+    console.error('Cannot generate a search query for nonexisting username.');
+    app.quit();
+  }
+}
+
+async function starSearch(starQuery) {
+  try {
+    const stars = await axios.get(starQuery);
+    return stars.data.length;
   } catch (err) {
     console.error(err);
   }
@@ -93,13 +97,15 @@ async function init() {
   try {
     const answers = await promptUser();
     const username = answers.github;
-    const search = 'https://api.github.com/search/users?q=' + username;
-    const userQuery = await gitSearch(search, username, answers);
+    const searchQuery = 'https://api.github.com/search/users?q=' + username;
+    const starQuery = 'https://api.github.com/users/' + username + '/starred';
+    const userQuery = await gitSearch(searchQuery);
     const info = await userSearch(userQuery);
+    const stars = await starSearch(starQuery);
     await writeFileAsync('userInfo.json', JSON.stringify(info));
-    console.log('Successfully wrote to userInfo.json');
-    const htmlInfo = htmlTemplate.generateHTML(info);
-    setBackground(answers);
+    console.log('Wrote to userInfo.json');
+    const htmlInfo = htmlTemplate.generateHTML(info, stars);
+    await setBackground(answers);
     await writeFileAsync('../../index.html', htmlInfo);
     console.log('Successfully wrote to index.html');
     await createWindow();
