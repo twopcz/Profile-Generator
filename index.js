@@ -59,13 +59,13 @@ async function setBackground(userColor) {
   }
   `;
 
-  writeFileAsync('../css/background.css', cssColor);
+  writeFileAsync('assets/css/background.css', cssColor);
 }
 
 async function createWindow() {
   win = new BrowserWindow({ show: false });
 
-  win.loadFile('../../index.html');
+  win.loadFile('./index.html');
 
   win.webContents.on('did-finish-load', () => {
     win.webContents
@@ -100,11 +100,11 @@ async function init() {
     const userQuery = await gitSearch(searchQuery);
     const info = await userSearch(userQuery);
     const stars = await starSearch(starQuery);
-    await writeFileAsync('userInfo.json', JSON.stringify(info));
+    await writeFileAsync('./userInfo.json', JSON.stringify(info));
     console.log('Wrote to userInfo.json');
     const htmlInfo = htmlTemplate.generateHTML(info, stars);
     await setBackground(answers);
-    await writeFileAsync('../../index.html', htmlInfo);
+    await writeFileAsync('./index.html', htmlInfo);
     console.log('Successfully wrote to index.html');
     await createWindow();
   } catch (err) {

@@ -1,5 +1,5 @@
-assets/script/node_modules/
-index.html
+node_modules
 assets/css/background.css
-assets/script/index.pdf
-assets/script/userInfo.json
+index.html
+index.pdf
+userInfo.json
