@@ -4,228 +4,66 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const util = require('util');
 const axios = require('axios');
-const { BrowserWindow } = require('electron');
-const prompts = require('./prompts');
+const { app, BrowserWindow } = require('electron');
 const open = require('open');
+const prompts = require('./prompts');
+const htmlTemplate = require('./htmlTemplate');
 
 let win;
 
 const writeFileAsync = util.promisify(fs.writeFile);
-const readFileAsync = util.promisify(fs.readFile);
 
 function promptUser() {
   return inquirer.prompt(prompts);
 }
 
-async function getUser(query, user, userAnswers) {
+async function gitSearch(gitQuery) {
   try {
-    const response = await axios.get(query);
+    const response = await axios.get(gitQuery);
 
-    if (response.data.total_count === 1) {
-      let userQuery = 'https://api.github.com/users/' + user;
-      const userSearch = await axios.get(userQuery);
-
-      const {
-        avatar_url,
-        url,
-        html_url,
-        name,
-        blog,
-        location,
-        email,
-        bio,
-        public_repos,
-        followers,
-        following
-      } = userSearch.data;
-
-      const userStars = await axios.get(url + '/starred');
-
-      // error handle null
-
-      const userData = [
-        {
-          repos: public_repos,
-          followers: followers,
-          following: following,
-          stars: userStars.data.length,
-          picture: avatar_url,
-          link: html_url,
-          name: name,
-          blog: blog,
-          location: location,
-          email: email,
-          bio: bio
-        }
-      ];
-
-      // write all user data, that way I can extract these all later
-      // and then I won't need the first userSearch.data either
-
-      await writeFileAsync('userInfo.json', JSON.stringify(userData));
-      console.log('Successfully wrote userInfo.json');
-
-      await generateHTML(userAnswers);
+    if (response.data.total_count >= 1) {
+      return `https://api.github.com/users/${response.data.items[0].login}`;
     } else {
-      console.log('Username not found.');
+      console.log('Username not found');
     }
   } catch (err) {
     console.error(err);
   }
 }
 
-async function generateHTML(answers) {
+async function userSearch(userQuery) {
   try {
-    const color = answers.color;
+    const user = await axios.get(userQuery);
+    return user.data;
+  } catch (err) {
+    console.error('Cannot generate a search query for nonexisting username.');
+    app.quit();
+  }
+}
 
-    const cssColor = `
-    body {
-        background-color: ${color};
-    }
-    `;
-
-    writeFileAsync('../css/background.css', cssColor);
-
-    readFileAsync('userInfo.json', 'utf8', (err, data) => {
-      if (err) throw err;
-      const fileData = JSON.parse(data);
-
-      const {
-        repos,
-        followers,
-        following,
-        stars,
-        picture,
-        link,
-        name,
-        blog,
-        location,
-        email,
-        bio
-      } = fileData[0];
-
-      const html = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-          <link
-          rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-          crossorigin="anonymous"
-          />
-          <script src="https://kit.fontawesome.com/53455dd245.js" crossorigin="anonymous"></script>
-          <link rel="stylesheet" href="assets/css/style.css" />
-          <link rel="stylesheet" href="assets/css/background.css" />
-          <title>CLI Profile Generator</title>
-        </head>
-        <body>
-          <div class="jumbotron jumbotron-fluid">
-            <div class="container text-center">
-              <h1 class="display-4">Hi! My name is <span class="font-weight-bold">${name}<span></h1>
-              <p class="lead"><em>${bio}</em></p>
-              <div class="row justify-content-center">
-                <div class="col-4">
-                  <img src="${picture}" class="img-fluid rounded-circle" alt="profile-pic">
-                </div>
-              </div>
-              <div class="row justify-content-center pt-3">
-                <div class="col-2">
-                  <p class="lead"><i class="fas fa-map-pin"></i> <a href="https://www.google.com/maps/place/${location}/" target="_blank">${location}</a></p>
-                </div>
-                <div class="col-2">
-                  <p class="lead"><i class="fab fa-github-square"></i> <a href="${link}" target="_blank">GitHub</a></p>
-                </div>
-                <div class="col-2">
-                  <p class="lead"><i class="fas fa-address-card"></i> <a href="${blog}" target="_blank">Portfolio</a></p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="container align-items-center text-center">
-            <div class="jumbotron bg-dark">
-              <div class="row py-2">
-                <div class="col-6">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Public Repos</h5>
-                      <p class="card-text">${repos}</p>
-                      <a href="${link}?tab=repositories" class="btn btn-primary" target="_blank">My Work</a>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Followers</h5>
-                      <p class="card-text">${followers}</p>
-                      <a href="${link}?tab=followers" class="btn btn-primary" target="_blank">My Followers</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row py-2">
-                <div class="col-6">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">GitHub Stars</h5>
-                      <p class="card-text">${stars}</p>
-                      <a href="${link}?tab=stars" class="btn btn-primary" target="_blank">Starred Repos</a>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="card">
-                    <div class="card-body">
-                      <h5 class="card-title">Following</h5>
-                      <p class="card-text">${following}</p>
-                      <a href="${link}?tab=following" class="btn btn-primary" target="_blank">Following</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-      
-          <script
-            src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-            crossorigin="anonymous"
-          ></script>
-          <script
-            src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            crossorigin="anonymous"
-          ></script>
-          <script
-            src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-            crossorigin="anonymous"
-          ></script>
-        </body>
-      </html>`;
-
-      writeFileAsync('../../index.html', html);
-      console.log('Successfully wrote to index.html');
-      createWindow();
-    });
+async function starSearch(starQuery) {
+  try {
+    const stars = await axios.get(starQuery);
+    return stars.data.length;
   } catch (err) {
     console.error(err);
   }
+}
+
+async function setBackground(userColor) {
+  const color = userColor.color;
+
+  const cssColor = `
+  body {
+    background-color: ${color};
+  }
+  `;
+
+  writeFileAsync('../css/background.css', cssColor);
 }
 
 async function createWindow() {
-  win = new BrowserWindow({show : false});
-  // win = new BrowserWindow({
-  //   width: 800,
-  //   height: 600,
-  //   webPreferences: {
-  //     nodeIntegration: true
-  //   }
-  // });
+  win = new BrowserWindow({ show: false });
 
   win.loadFile('../../index.html');
 
@@ -246,25 +84,32 @@ async function createWindow() {
   });
 }
 
+async function openPDF() {
+  await open('./index.pdf', { wait: true });
+  console.log('The PDF viewer was closed.');
+  await win.close();
+}
+
 async function init() {
   console.log('initializing...');
   try {
     const answers = await promptUser();
-
-    let username = answers.github;
-
-    let searchQuery = 'https://api.github.com/search/users?q=' + username;
-
-    await getUser(searchQuery, username, answers);
+    const username = answers.github;
+    const searchQuery = 'https://api.github.com/search/users?q=' + username;
+    const starQuery = 'https://api.github.com/users/' + username + '/starred';
+    const userQuery = await gitSearch(searchQuery);
+    const info = await userSearch(userQuery);
+    const stars = await starSearch(starQuery);
+    await writeFileAsync('userInfo.json', JSON.stringify(info));
+    console.log('Wrote to userInfo.json');
+    const htmlInfo = htmlTemplate.generateHTML(info, stars);
+    await setBackground(answers);
+    await writeFileAsync('../../index.html', htmlInfo);
+    console.log('Successfully wrote to index.html');
+    await createWindow();
   } catch (err) {
     console.error(err);
   }
-}
-
-async function openPDF() {
-  await open('./index.pdf', {wait: true});
-  console.log('The PDF viewer was closed.');
-  await win.close();
 }
 
 init();
