@@ -1,6 +1,6 @@
 'use strict';
 
-const generateHTML = (answers) => {
+const generateHTML = (userInfo, userStars) => {
   return `
         <!DOCTYPE html>
         <html lang="en">
@@ -22,22 +22,22 @@ const generateHTML = (answers) => {
         <body>
           <div class="jumbotron jumbotron-fluid">
             <div class="container text-center">
-              <h1 class="display-4">Hi! My name is <span class="font-weight-bold">${answers.name}<span></h1>
-              <p class="lead"><em>${answers.bio}</em></p>
+              <h1 class="display-4">Hi! My name is <span class="font-weight-bold">${userInfo.name}<span></h1>
+              <p class="lead"><em>${userInfo.bio}</em></p>
               <div class="row justify-content-center">
                 <div class="col-4">
-                  <img src="${answers.avatar_url}" class="img-fluid rounded-circle" alt="profile-pic">
+                  <img src="${userInfo.avatar_url}" class="img-fluid rounded-circle" alt="profile-pic">
                 </div>
               </div>
               <div class="row justify-content-center pt-3">
                 <div class="col-2">
-                  <p class="lead"><i class="fas fa-map-pin"></i> <a href="https://www.google.com/maps/place/${answers.location}/" target="_blank">${answers.location}</a></p>
+                  <p class="lead"><i class="fas fa-map-pin"></i> <a href="https://www.google.com/maps/place/${userInfo.location}/" target="_blank">${userInfo.location}</a></p>
                 </div>
                 <div class="col-2">
-                  <p class="lead"><i class="fab fa-github-square"></i> <a href="${answers.html_url}" target="_blank">GitHub</a></p>
+                  <p class="lead"><i class="fab fa-github-square"></i> <a href="${userInfo.html_url}" target="_blank">GitHub</a></p>
                 </div>
                 <div class="col-2">
-                  <p class="lead"><i class="fas fa-address-card"></i> <a href="${answers.blog}" target="_blank">Portfolio</a></p>
+                  <p class="lead"><i class="fas fa-address-card"></i> <a href="${userInfo.blog}" target="_blank">Portfolio</a></p>
                 </div>
               </div>
             </div>
@@ -49,8 +49,8 @@ const generateHTML = (answers) => {
                   <div class="card">
                     <div class="card-body">
                       <h5 class="card-title">Public Repos</h5>
-                      <p class="card-text">${answers.public_repos}</p>
-                      <a href="${answers.html_url}?tab=repositories" class="btn btn-primary" target="_blank">My Work</a>
+                      <p class="card-text">${userInfo.public_repos}</p>
+                      <a href="${userInfo.html_url}?tab=repositories" class="btn btn-primary" target="_blank">My Work</a>
                     </div>
                   </div>
                 </div>
@@ -58,8 +58,8 @@ const generateHTML = (answers) => {
                   <div class="card">
                     <div class="card-body">
                       <h5 class="card-title">Followers</h5>
-                      <p class="card-text">${answers.followers}</p>
-                      <a href="${answers.html_url}?tab=followers" class="btn btn-primary" target="_blank">My Followers</a>
+                      <p class="card-text">${userInfo.followers}</p>
+                      <a href="${userInfo.html_url}?tab=followers" class="btn btn-primary" target="_blank">My Followers</a>
                     </div>
                   </div>
                 </div>
@@ -69,8 +69,8 @@ const generateHTML = (answers) => {
                   <div class="card">
                     <div class="card-body">
                       <h5 class="card-title">GitHub Stars</h5>
-                      <p class="card-text">${answers.stars}</p>
-                      <a href="${answers.html_url}?tab=stars" class="btn btn-primary" target="_blank">Starred Repos</a>
+                      <p class="card-text">${userStars}</p>
+                      <a href="${userInfo.html_url}?tab=stars" class="btn btn-primary" target="_blank">Starred Repos</a>
                     </div>
                   </div>
                 </div>
@@ -78,8 +78,8 @@ const generateHTML = (answers) => {
                   <div class="card">
                     <div class="card-body">
                       <h5 class="card-title">Following</h5>
-                      <p class="card-text">${answers.following}</p>
-                      <a href="${answers.html_url}?tab=following" class="btn btn-primary" target="_blank">Following</a>
+                      <p class="card-text">${userInfo.following}</p>
+                      <a href="${userInfo.html_url}?tab=following" class="btn btn-primary" target="_blank">Following</a>
                     </div>
                   </div>
                 </div>
