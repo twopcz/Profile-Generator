@@ -46,7 +46,8 @@ async function starSearch(starQuery) {
     const stars = await axios.get(starQuery);
     return stars.data.length;
   } catch (err) {
-    console.error(err);
+    // this error with a lot of spaces
+    // console.error(err);
   }
 }
 
@@ -113,3 +114,7 @@ async function init() {
 }
 
 init();
+
+module.exports = {
+  setBackground
+};
