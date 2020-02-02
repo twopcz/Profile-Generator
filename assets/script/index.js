@@ -35,8 +35,6 @@ async function userSearch(userQuery) {
   try {
     const user = await axios.get(userQuery);
     return user.data;
-
-    // error handle null
   } catch (err) {
     console.error('Cannot generate a search query for nonexisting username.');
     app.quit();
