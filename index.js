@@ -46,8 +46,8 @@ async function starSearch(starQuery) {
     const stars = await axios.get(starQuery);
     return stars.data.length;
   } catch (err) {
-    // this error with a lot of spaces
-    // console.error(err);
+    console.error('No stars for nonusers');
+    // app.quit();
   }
 }
 
@@ -116,5 +116,9 @@ async function init() {
 init();
 
 module.exports = {
+  promptUser,
+  gitSearch,
+  userSearch,
+  starSearch,
   setBackground
 };
