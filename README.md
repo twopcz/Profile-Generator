@@ -31,7 +31,8 @@ This will start the script. The user will be prompted for a GitHub username foll
 These are all `<a>` elements that open to their corresponding web page. The `.html` file will be saved and converted into a `.pdf` file that is then saved in `root` and opened up for the user to view with the default reader. Once the reader is closed, the application will exit.
 
 ### Demo
-[Insert Video Here]()
+![](assets/images/profilegen.gif)
+[Video](https://github.com/twopcz/Profile-Generator/blob/master/assets/images/Profile-Gen.mp4)
 
 # Technologies
 
