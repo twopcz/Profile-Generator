@@ -32,6 +32,7 @@ These are all `<a>` elements that open to their corresponding web page. The `.ht
 
 ### Demo
 ![](assets/images/profilegen.gif)
+[Video](https://github.com/twopcz/Profile-Generator/blob/master/assets/images/Profile-Gen.mp4)
 
 # Technologies
 
