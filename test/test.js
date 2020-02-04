@@ -3,6 +3,7 @@
 const inquirer = require('inquirer');
 const axios = require('axios');
 const index = require('../index.js');
+const fs = require('fs');
 
 jest.mock('inquirer');
 jest.mock('axios');
@@ -17,48 +18,44 @@ describe('Index', () => {
     });
 
     describe('gitSearch', () => {
-      it("gets data successfully from GitHub's api", async () => {
-        const input = 'https://api.github.com/search/users?q=twopcz';
-        const output = `https://api.github.com/users/twopcz`;
+      it("gets data successfully from GitHub's api with correct input, otherwise undefined", async () => {
+        const input = '';
+        const output = undefined;
 
         axios.get.mockImplementationOnce(() => Promise.resolve(data));
 
-        expect(index.gitSearch(input)).resolves.toEqual(output);
-      });
-
-      it("does not successfully get data from GitHub's api", async () => {
-        const errorMessage = 'Network Error';
-
-        axios.get.mockImplementationOnce(() =>
-          Promise.reject(new Error(errorMessage))
-        );
-
-        expect(index.gitSearch('')).rejects.toThrow(errorMessage);
+        await expect(index.gitSearch(input)).resolves.toEqual(output);
       });
     });
 
     describe('userSearch', () => {
       it('gets data based on the user', async () => {
-        const data = {};
+        const user = [{login: 'test'}];
+        const resp = { data: user };
 
-        const input = `https://api.github.com/users/twopcz`;
+        axios.get.mockImplementationOnce(() => Promise.resolve(resp));
 
-        axios.get.mockImplementationOnce(() => Promise.resolve(data));
-
-        await expect(index.userSearch(input)).resolves.toEqual(data);
+        return index.userSearch().then(data => expect(data).toEqual(user));
       });
     });
 
     describe('starSearch', () => {
-      it('gets starred repos from the user', async () => {
-        const data = {};
+      it('gets starred repo from users if they exist, if not, undefined', async () => {
+        const stars = undefined;
+        const resp = [{ data: stars }];
 
-        const input = 'https://api.github.com/users/twopcz/starred';
-        const errorMessage = 'Network Error';
+        axios.get.mockImplementationOnce(() => Promise.resolve(resp));
 
-        axios.get.mockImplementationOnce(() => Promise.resolve(data));
+        return index.starSearch().then(data => expect(data).toEqual(stars));
+      });
+    });
 
-        await expect(index.starSearch(input)).resolves.toThrow(errorMessage);
+    describe('setBackground', () => {
+      it('sets the background color and saves it', () => {
+        const input = [{ color: 'test' }];
+        const output = 'idk';
+
+        expect(index.setBackground(input)).toEqual(output);
       });
     });
   });
